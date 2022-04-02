@@ -5,6 +5,8 @@ const username = "cdlampley";
 const repoList = document.querySelector(".repo-list");
 const repoSection = document.querySelector(".repos");
 const repoData = document.querySelector(".repo-data");
+const backToRepo = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 // Create and name an async function to fetch information from your GitHub profile
 const githubData = async function () {
@@ -17,7 +19,7 @@ const githubData = async function () {
 githubData();
 
 // Below the async function to fetch your GitHub user data, create and name a new function to display the fetched user information on the page. This function should accept the JSON data as a parameter.
-const githubUserInfo = async function (data) {
+const githubUserInfo = function (data) {
     const div = document.createElement("div");
     div.classList.add("user-info");
     div.innerHTML = `<figure>
@@ -30,7 +32,7 @@ const githubUserInfo = async function (data) {
     <p><strong>Number of public repos:</strong> ${data.public_repos}</p>
   </div> `;
     overview.append(div);
-    myRepos();
+    myRepos(username);
 };
 
 const myRepos = async function () {
@@ -39,10 +41,10 @@ const myRepos = async function () {
     console.log(reposResponse);
     repoDisplay(reposResponse);
 };
-//myRepos();
 
 // Below the async function fetching the repos, create and name a function to display information about each repo
 const repoDisplay = function (repos) {
+    filterInput.classList.remove("hide");
     //loop and create a list item for each repo and give each item class of "repo" & An <h3> element with the repo name
     for (const repo of repos) {
         const repoListItem = document.createElement("li");
@@ -75,6 +77,7 @@ const repoSpecificInfo = async function (repoName) {
         console.log(languages);
     }
     displayRepoInfo(repoInfo, languages);
+    backToRepo.classList.remove("hide");
 };
 
 // create and name a new function to display the specific repo information. The function should accept two parameters:  repoInfo and languages.
@@ -91,4 +94,29 @@ const displayRepoInfo = function (repoInfo, languages){
     repoData.append(repoDiv);
     repoData.classList.remove("hide");
     repoSection.classList.add("hide");
+
 };
+
+// create a click event listener attached to your variable that points to the Back to Repo Gallery button. 
+backToRepo.addEventListener("click", function(){
+    repoSection.classList.remove("hide");
+    repoData.classList.add("hide");
+    backToRepo.classList.add("hide");
+});
+
+// attach an "input" event listener to filterInput. Pass the event (e) the callback function
+filterInput.addEventListener("input", function(e){
+    // create a variable to capture the value of the search text
+    const inputSearch = e.target.value;
+    console.log(inputSearch);
+    const repos = document.querySelectorAll(".repo");
+    const lowerInput = inputSearch.toLowerCase();
+    for (const repo of repos) {
+        const lowerText = repo.innerText.toLowerCase();
+        if (lowerText.includes(lowerInput)) {
+            repo.classList.remove("hide");
+        } else {
+            repo.classList.add("hide");
+        }
+    }
+});
